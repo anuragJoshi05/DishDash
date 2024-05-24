@@ -1,9 +1,8 @@
-
 import 'dart:convert';
 import 'package:dishdash/model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+// Keep 'package:flutter/cupertino.dart'; if you need Cupertino widgets
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -46,14 +45,15 @@ class _HomeState extends State<Home> {
         children: [
           Container(
             decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.purple,
-                    Colors.pink,
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                )),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple,
+                  Colors.pink,
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
           ),
           SingleChildScrollView(
             child: Column(
@@ -105,36 +105,36 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "WHAT DO YOU WANT TO COOK TODAY?",
-                          style: TextStyle(fontSize: 40, color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Let's cook something new",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ],
-                    )
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "WHAT DO YOU WANT TO COOK TODAY?",
+                        style: TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Let's cook something new",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                      itemCount: 1000,
-                      itemBuilder: (context,index){
+                    itemCount: 1000,
+                    itemBuilder: (context, index) {
                       return const Text("This is my widget");
-                      }
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),
