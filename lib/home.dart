@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'package:dishdash/model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -54,75 +55,88 @@ class _HomeState extends State<Home> {
                   end: Alignment.centerRight,
                 )),
           ),
-          Column(
-            children: [
-              SafeArea(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  margin:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if ((searchController.text).replaceAll(" ", "") ==
-                              "") {
-                            print("no value");
-                          } else {
-                            getRecipe(searchController.text);
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(3, 0, 7, 0),
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.lightBlue.shade300,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          onSubmitted: (value) {
-                            if (value.trim().isNotEmpty) {
-                              getRecipe(value.trim());
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SafeArea(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    margin:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if ((searchController.text).replaceAll(" ", "") ==
+                                "") {
+                              print("no value");
+                            } else {
+                              getRecipe(searchController.text);
                             }
                           },
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Yummy Search!!!",
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(3, 0, 7, 0),
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.lightBlue.shade300,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            onSubmitted: (value) {
+                              if (value.trim().isNotEmpty) {
+                                getRecipe(value.trim());
+                              }
+                            },
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Yummy Search!!!",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 20,
+                Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "WHAT DO YOU WANT TO COOK TODAY?",
+                          style: TextStyle(fontSize: 40, color: Colors.white),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Let's cook something new",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ],
+                    )
+                ),
+                Container(
+                  child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                      itemCount: 1000,
+                      itemBuilder: (context,index){
+                      return const Text("This is my widget");
+                      }
                   ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "WHAT DO YOU WANT TO COOK TODAY?",
-                        style: TextStyle(fontSize: 40, color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Let's cook something new",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ],
-                  ))
-            ],
+                )
+              ],
+            ),
           ),
         ],
       ),
