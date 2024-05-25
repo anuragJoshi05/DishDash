@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
 
   Future<void> getRecipe(String query) async {
     String url =
-        "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=3&calories=591-722&health=alcohol-free";
+        "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=10&calories=591-722&health=alcohol-free";
     http.Response response = await http.get(Uri.parse(url));
     Map<String, dynamic> data = jsonDecode(response.body);
     recipeList.clear(); // Clear the list before adding new items
@@ -128,6 +128,11 @@ class _HomeState extends State<Home> {
                     return InkWell(
                       onTap: () {},
                       child: Card(
+                        margin: const EdgeInsets.all(10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 0.00,
                         child: Stack(
                           children: [
                             ClipRRect(
@@ -141,7 +146,49 @@ class _HomeState extends State<Home> {
                                     200.0, // You can adjust the height as needed
                               ),
                             ),
-                            // Add other widget elements for your card here if needed
+                            Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 10),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black26,
+                                    ),
+                                    child: Text(
+                                      recipeList[index].appLabel,
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ))),
+                            Positioned(
+                                right: 0,
+                                height: 40,
+                                width: 80,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.greenAccent,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10)),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.local_fire_department),
+                                        Text(
+                                          recipeList[index]
+                                              .appCal
+                                              .toStringAsFixed(0),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                // Add other widget elements for your card here if needed
+                                ),
                           ],
                         ),
                       ),
