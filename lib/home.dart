@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:dishdash/model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-// Keep 'package:flutter/cupertino.dart'; if you need Cupertino widgets
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,26 +13,26 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<RecipeModel> recipeList = <RecipeModel>[];
   TextEditingController searchController = TextEditingController();
-  String url =
-      "https://api.edamam.com/search?q=peanutbutter&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=3&calories=591-722&health=alcohol-free";
+
   Future<void> getRecipe(String query) async {
     String url =
         "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=3&calories=591-722&health=alcohol-free";
     http.Response response = await http.get(Uri.parse(url));
     Map<String, dynamic> data = jsonDecode(response.body);
+    recipeList.clear(); // Clear the list before adding new items
     data["hits"].forEach((element) {
-      RecipeModel recipeMod = RecipeModel();
-      recipeMod = RecipeModel.fromMap(element["recipe"]);
+      RecipeModel recipeMod = RecipeModel.fromMap(element["recipe"]);
       recipeList.add(recipeMod);
     });
     for (var recipe in recipeList) {
       print(recipe.appLabel);
+      print(recipe.appImgUrl); // Print image URLs to verify
     }
+    setState(() {}); // To refresh the UI with new data
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getRecipe("chocolate");
   }
@@ -61,8 +60,8 @@ class _HomeState extends State<Home> {
                 SafeArea(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                    margin:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(30),
@@ -105,9 +104,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -115,9 +112,7 @@ class _HomeState extends State<Home> {
                         "WHAT DO YOU WANT TO COOK TODAY?",
                         style: TextStyle(fontSize: 40, color: Colors.white),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20),
                       Text(
                         "Let's cook something new",
                         style: TextStyle(fontSize: 20, color: Colors.white),
@@ -125,15 +120,33 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-                Container(
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: 1000,
-                    itemBuilder: (context, index) {
-                      return const Text("This is my widget");
-                    },
-                  ),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: recipeList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {},
+                      child: Card(
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(
+                                recipeList[index].appImgUrl,
+                                fit: BoxFit
+                                    .cover, // Ensures the image covers the entire area
+                                width: double.infinity,
+                                height:
+                                    200.0, // You can adjust the height as needed
+                              ),
+                            ),
+                            // Add other widget elements for your card here if needed
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
