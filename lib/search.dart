@@ -1,37 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:dishdash/search.dart';
 
-
-class RecipeModel {
-  final String appLabel;
-  final String appImgUrl;
-  final double appCal;
-
-  RecipeModel(
-      {required this.appLabel, required this.appImgUrl, required this.appCal});
-
-  factory RecipeModel.fromMap(Map<String, dynamic> map) {
-    return RecipeModel(
-      appLabel: map['label'],
-      appImgUrl: map['image'],
-      appCal: map['calories'],
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Search extends StatefulWidget {
+  final String query;
+  const Search(this.query, {Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Search> createState() => _SearchState();
 }
 
-class _HomeState extends State<Home> {
+class _SearchState extends State<Search> {
   bool isLoading = true;
   List<RecipeModel> recipeList = <RecipeModel>[];
   TextEditingController searchController = TextEditingController();
+
   List recipeCatList = [
     {
       "imgUrl":
@@ -61,6 +44,10 @@ class _HomeState extends State<Home> {
   ];
 
   Future<void> getRecipe(String query) async {
+    setState(() {
+      isLoading = true;
+    });
+
     String url =
         "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=10&calories=591-722&health=alcohol-free";
     http.Response response = await http.get(Uri.parse(url));
@@ -70,6 +57,7 @@ class _HomeState extends State<Home> {
       RecipeModel recipeMod = RecipeModel.fromMap(element["recipe"]);
       recipeList.add(recipeMod);
     });
+
     setState(() {
       isLoading = false;
     }); // To refresh the UI with new data
@@ -78,7 +66,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getRecipe("chocolate");
+    getRecipe(widget.query);
   }
 
   @override
@@ -118,7 +106,13 @@ class _HomeState extends State<Home> {
                                 "") {
                               print("no value");
                             } else {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Search(searchController.text)));
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Search(searchController.text),
+                                ),
+                              );
                             }
                           },
                           child: Container(
@@ -147,24 +141,11 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "WHAT DO YOU WANT TO COOK TODAY?",
-                        style: TextStyle(fontSize: 40, color: Colors.white),
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        "Let's cook something new",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                isLoading ? CircularProgressIndicator() : ListView.builder(
+                isLoading
+                    ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+                    : ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: recipeList.length,
@@ -183,11 +164,9 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.network(
                                 recipeList[index].appImgUrl,
-                                fit: BoxFit
-                                    .cover, // Ensures the image covers the entire area
+                                fit: BoxFit.cover,
                                 width: double.infinity,
-                                height:
-                                200.0, // You can adjust the height as needed
+                                height: 200.0,
                               ),
                             ),
                             Positioned(
@@ -203,7 +182,8 @@ class _HomeState extends State<Home> {
                                     child: Text(
                                       recipeList[index].appLabel,
                                       style: const TextStyle(
-                                          color: Colors.white, fontSize: 20),
+                                          color: Colors.white,
+                                          fontSize: 20),
                                     ))),
                             Positioned(
                                 right: 0,
@@ -221,7 +201,8 @@ class _HomeState extends State<Home> {
                                       mainAxisAlignment:
                                       MainAxisAlignment.center,
                                       children: [
-                                        const Icon(Icons.local_fire_department),
+                                        const Icon(
+                                            Icons.local_fire_department),
                                         Text(
                                           recipeList[index]
                                               .appCal
@@ -230,76 +211,38 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                )
-                              // Add other widget elements for your card here if needed
-                            ),
+                                )),
                           ],
                         ),
                       ),
                     );
                   },
                 ),
-                SizedBox(
-                  height: 250, // Provide a fixed height for the ListView
-                  child: ListView.builder(
-                    itemCount: recipeCatList.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () {},
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 0.00,
-
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    recipeCatList[index]["imgUrl"],
-                                    fit: BoxFit.cover,
-                                    width: 200,
-                                    height: 250,
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  top: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 10),
-                                    decoration: const BoxDecoration(
-                                        color: Colors.black26),
-                                    child: Center(
-                                      child: Text(
-                                        recipeCatList[index]["heading"],
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 28),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class RecipeModel {
+  String appLabel;
+  String appImgUrl;
+  double appCal;
+
+  RecipeModel({
+    required this.appLabel,
+    required this.appImgUrl,
+    required this.appCal,
+  });
+
+  factory RecipeModel.fromMap(Map<String, dynamic> parsedJson) {
+    return RecipeModel(
+      appLabel: parsedJson["label"],
+      appImgUrl: parsedJson["image"],
+      appCal: parsedJson["calories"],
     );
   }
 }
