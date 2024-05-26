@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getRecipe("chocolate");
+    getRecipe("Pasta");
   }
 
   @override
@@ -142,6 +142,7 @@ class _HomeState extends State<Home> {
                         Expanded(
                           child: TextField(
                             controller: searchController,
+                            style: TextStyle(color: Colors.greenAccent),
                             onSubmitted: (value) {
                               if (value.trim().isNotEmpty) {
                                 getRecipe(value.trim());
@@ -203,55 +204,53 @@ class _HomeState extends State<Home> {
                                           recipeList[index].appUrl)));
                             },
                             child: Card(
-                              margin: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 15),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                              elevation: 0.00,
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
+                              elevation: 5,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
                                       recipeList[index].appImgUrl,
-                                      fit: BoxFit
-                                          .cover, // Ensures the image covers the entire area
+                                      fit: BoxFit.cover,
                                       width: double.infinity,
-                                      height:
-                                          200.0, // You can adjust the height as needed
+                                      height: 200.0,
                                     ),
-                                  ),
-                                  Positioned(
-                                      left: 0,
-                                      right: 0,
-                                      bottom: 0,
-                                      child: Container(
+                                    Positioned(
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 20),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black45,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Text(
+                                              recipeList[index].appLabel,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ))),
+                                    Positioned(
+                                        right: 10,
+                                        top: 10,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.greenAccent,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 10),
-                                          decoration: const BoxDecoration(
-                                            color: Colors.black26,
-                                          ),
-                                          child: Text(
-                                            recipeList[index].appLabel,
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ))),
-                                  Positioned(
-                                      right: 0,
-                                      height: 40,
-                                      width: 80,
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.greenAccent,
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10),
-                                              bottomLeft: Radius.circular(10)),
-                                        ),
-                                        child: Center(
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
                                             children: [
                                               const Icon(
                                                   Icons.local_fire_department),
@@ -262,18 +261,16 @@ class _HomeState extends State<Home> {
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      )
-                                      // Add other widget elements for your card here if needed
-                                      ),
-                                ],
+                                        )),
+                                  ],
+                                ),
                               ),
                             ),
                           );
                         },
                       ),
                 SizedBox(
-                  height: 250, // Provide a fixed height for the ListView
+                  height: 250,
                   child: ListView.builder(
                     itemCount: recipeCatList.length,
                     shrinkWrap: true,
@@ -293,39 +290,43 @@ class _HomeState extends State<Home> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            elevation: 0.00,
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
+                            elevation: 5,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Stack(
+                                children: [
+                                  Image.network(
                                     recipeCatList[index]["imgUrl"],
                                     fit: BoxFit.cover,
                                     width: 200,
                                     height: 250,
                                   ),
-                                ),
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  top: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 10),
-                                    decoration: const BoxDecoration(
-                                        color: Colors.black26),
-                                    child: Center(
-                                      child: Text(
-                                        recipeCatList[index]["heading"],
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 28),
-                                        textAlign: TextAlign.center,
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    top: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.black26,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Center(
+                                        child: Text(
+                                          recipeCatList[index]["heading"],
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

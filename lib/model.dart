@@ -6,11 +6,11 @@ class RecipeModel {
 
   RecipeModel(
       {this.appLabel = "app",
-        this.appImgUrl = "img",
-        this.appCal = 0.000,
-        this.appUrl = "url"});
+      this.appImgUrl = "img",
+      this.appCal = 0.000,
+      this.appUrl = "url"});
 
-  factory RecipeModel.fromMap(Map recipe){
+  factory RecipeModel.fromMap(Map recipe) {
     return RecipeModel(
       appUrl: recipe["url"],
       appLabel: recipe["label"],
