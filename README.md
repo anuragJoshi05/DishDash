@@ -12,8 +12,12 @@ DishDash is a Flutter application designed to help users find and explore a vari
 
 ## Screenshots
 
-![Home Screen](screenshots/home_screen.png)
-![Recipe Details](screenshots/recipe_details.png)
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/anuragJoshi05/DishDash/assets/148903459/63cbfb2e-c9a3-4c3a-a127-45c868e75bdb" width="200">
+  <img src="https://github.com/anuragJoshi05/DishDash/assets/148903459/06b62cef-ff24-439c-a95a-708c42859321" width="200">
+  <img src="https://github.com/anuragJoshi05/DishDash/assets/148903459/84e8e611-1956-4496-b393-fed413a3d80d" width="200">
+  <img src="https://github.com/anuragJoshi05/DishDash/assets/148903459/7ceaff4a-1a47-4203-9c20-03cf112e2839" width="200">
+</div>
 
 ## Getting Started
 
