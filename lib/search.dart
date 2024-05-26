@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'RecipeView.dart';
+
 class Search extends StatefulWidget {
   final String query;
   const Search(this.query, {Key? key}) : super(key: key);
@@ -151,7 +153,9 @@ class _SearchState extends State<Search> {
                   itemCount: recipeList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeView(recipeList[index].appUrl)));
+                      },
                       child: Card(
                         margin: const EdgeInsets.all(10),
                         shape: RoundedRectangleBorder(
@@ -231,11 +235,13 @@ class RecipeModel {
   String appLabel;
   String appImgUrl;
   double appCal;
+  String appUrl;
 
   RecipeModel({
     required this.appLabel,
     required this.appImgUrl,
     required this.appCal,
+    required this.appUrl,
   });
 
   factory RecipeModel.fromMap(Map<String, dynamic> parsedJson) {
@@ -243,6 +249,7 @@ class RecipeModel {
       appLabel: parsedJson["label"],
       appImgUrl: parsedJson["image"],
       appCal: parsedJson["calories"],
+      appUrl: parsedJson["url"],
     );
   }
 }
