@@ -46,6 +46,9 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("DishDash"),
+      ),
       body: Stack(
         children: [
           Container(

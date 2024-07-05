@@ -28,12 +28,7 @@ class _RecipeViewState extends State<RecipeView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "DishDash",
-          style: TextStyle(color: Colors.yellow),
-        ),
-        backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.yellow),
+        title: Text("DishDash"),
       ),
       body: InAppWebView(
         initialUrlRequest: URLRequest(url: webUri),
