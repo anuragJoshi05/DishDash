@@ -1,26 +1,28 @@
-import 'package:dishdash/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'splash_screen.dart';
+import 'home.dart';
+import 'recipe_controller.dart';
 
 void main() {
-  runApp(const MyApp());
+  Get.put(RecipeController()); // Initialize the controller
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'DishDash',
       theme: ThemeData(
-        fontFamily: ""
-            "Poppins",
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-        useMaterial3: true,
+        primarySwatch: Colors.deepPurple,
+        fontFamily: 'Pacifico',
       ),
-      home: const Home(),
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/home', page: () => Home()),
+      ],
     );
   }
 }
