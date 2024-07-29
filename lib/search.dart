@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:get/get.dart';
+import 'recipe_controller.dart';
 import 'RecipeView.dart';
 
 class Search extends StatefulWidget {
@@ -13,34 +12,12 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  bool isLoading = true;
-  List<RecipeModel> recipeList = <RecipeModel>[];
-  TextEditingController searchController = TextEditingController();
-
-  Future<void> getRecipe(String query) async {
-    setState(() {
-      isLoading = true;
-    });
-
-    String url =
-        "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=10&calories=591-722&health=alcohol-free";
-    http.Response response = await http.get(Uri.parse(url));
-    Map<String, dynamic> data = jsonDecode(response.body);
-    recipeList.clear(); // Clear the list before adding new items
-    data["hits"].forEach((element) {
-      RecipeModel recipeMod = RecipeModel.fromMap(element["recipe"]);
-      recipeList.add(recipeMod);
-    });
-
-    setState(() {
-      isLoading = false;
-    }); // To refresh the UI with new data
-  }
+  final RecipeController controller = Get.put(RecipeController());
 
   @override
   void initState() {
     super.initState();
-    getRecipe(widget.query);
+    controller.getRecipe(widget.query);
   }
 
   @override
@@ -48,12 +25,12 @@ class _SearchState extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         title: Text("DishDash"),
+        backgroundColor: Colors.deepPurple,
       ),
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[900], // Dark gray or charcoal background color
               gradient: LinearGradient(
                 colors: [
                   Colors.grey[900]!,
@@ -68,184 +45,157 @@ class _SearchState extends State<Search> {
             child: Column(
               children: [
                 SafeArea(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.black, // Updated background color to black
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if ((searchController.text).replaceAll(" ", "") ==
-                                "") {
-                              print("no value");
-                            } else {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      Search(searchController.text),
-                                ),
-                              );
-                            }
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(3, 0, 7, 0),
-                            child: Icon(
-                              Icons.search,
-                              color:
-                                  Colors.yellow, // Updated icon color to yellow
-                            ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
                           ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (value) {
-                              if (value.trim().isNotEmpty) {
-                                getRecipe(value.trim());
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (controller.searchController.text.trim().isNotEmpty) {
+                                controller.getRecipe(controller.searchController.text);
                               }
                             },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Yummy Search!!!",
-                              hintStyle: TextStyle(
-                                  color: Colors
-                                      .yellow), // Updated hint text color to yellow
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  // Add your action here
-                                },
-                                icon: Icon(
-                                  Icons.favorite,
-                                  color: Colors
-                                      .yellow, // Updated icon color to yellow
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(3, 0, 7, 0),
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: controller.searchController,
+                              style: TextStyle(color: Colors.black87),
+                              onSubmitted: (value) {
+                                if (value.trim().isNotEmpty) {
+                                  controller.getRecipe(value.trim());
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search for recipes...",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    // Add your action here
+                                  },
+                                  icon: Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.deepPurple,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: recipeList.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RecipeView(
-                                          recipeList[index].appUrl)));
-                            },
-                            child: Card(
-                              margin: const EdgeInsets.all(10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 0.00,
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: controller.recipeList.length,
+                      itemBuilder: (context, index) {
+                        final recipe = controller.recipeList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Get.to(() => RecipeView(recipe.appUrl));
+                          },
+                          child: Card(
+                            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 5,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
                               child: Stack(
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
-                                      recipeList[index].appImgUrl,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: 200.0,
-                                    ),
+                                  Image.network(
+                                    recipe.appImgUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 200.0,
                                   ),
                                   Positioned(
                                     left: 0,
                                     right: 0,
                                     bottom: 0,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 10),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.black26,
+                                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black45,
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(20),
+                                          bottomRight: Radius.circular(20),
+                                        ),
                                       ),
                                       child: Text(
-                                        recipeList[index].appLabel,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                        recipe.appLabel,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
                                   Positioned(
-                                    right: 0,
-                                    height: 40,
-                                    width: 80,
+                                    right: 10,
+                                    top: 10,
                                     child: Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.greenAccent,
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10)),
+                                      decoration: BoxDecoration(
+                                        color: Colors.deepPurpleAccent,
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                                Icons.local_fire_department),
-                                            Text(
-                                              recipeList[index]
-                                                  .appCal
-                                                  .toStringAsFixed(0),
-                                            ),
-                                          ],
-                                        ),
+                                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.local_fire_department, color: Colors.white),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            recipe.appCal.toStringAsFixed(0),
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                }),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class RecipeModel {
-  String appLabel;
-  String appImgUrl;
-  double appCal;
-  String appUrl;
-
-  RecipeModel({
-    required this.appLabel,
-    required this.appImgUrl,
-    required this.appCal,
-    required this.appUrl,
-  });
-
-  factory RecipeModel.fromMap(Map<String, dynamic> parsedJson) {
-    return RecipeModel(
-      appLabel: parsedJson["label"],
-      appImgUrl: parsedJson["image"],
-      appCal: parsedJson["calories"],
-      appUrl: parsedJson["url"],
     );
   }
 }
