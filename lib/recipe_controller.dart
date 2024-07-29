@@ -62,7 +62,6 @@ class RecipeController extends GetxController {
     },
   ];
 
-
   Future<void> getRecipe(String query) async {
     isLoading(true);
     String url =
@@ -77,9 +76,14 @@ class RecipeController extends GetxController {
     isLoading(false);
   }
 
+  Future<void> loadData() async {
+    // newly added: Method to load initial data
+    await getRecipe("Pasta"); // newly added
+  }
+
   @override
   void onInit() {
     super.onInit();
-    getRecipe("Pasta");
+    loadData(); // newly added: Initialize data loading on controller initialization
   }
 }
