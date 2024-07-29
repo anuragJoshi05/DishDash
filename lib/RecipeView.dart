@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
+import 'webview_controller.dart';
 
-class RecipeView extends StatefulWidget {
+class RecipeView extends StatelessWidget {
   final String url;
 
   RecipeView(this.url);
 
   @override
-  _RecipeViewState createState() => _RecipeViewState();
-}
-
-class _RecipeViewState extends State<RecipeView> {
-  late String finalUrl;
-  @override
-  void initState() {
-    if (widget.url.toString().contains("http://")) {
-      finalUrl = widget.url.toString().replaceAll("http://", "https://");
-    } else {
-      finalUrl = widget.url;
-    }
-    super.initState();
-  }
-
   Widget build(BuildContext context) {
-    // Create a WebUri object using the constructor
-    WebUri webUri = WebUri(finalUrl);
+    final WebViewController controller = Get.put(WebViewController());
+    controller.setUrl(url);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("DishDash"),
+        title: Text(
+          "DishDash",
+          style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 2.0,
+        backgroundColor: Colors.deepPurple,
       ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: webUri),
-      ),
+      body: Obx(() {
+        WebUri webUri = WebUri(controller.url.value);
+        return InAppWebView(
+          initialUrlRequest: URLRequest(url: webUri),
+        );
+      }),
     );
   }
 }
