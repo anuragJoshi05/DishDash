@@ -1,120 +1,36 @@
-import 'dart:convert';
-import 'package:dishdash/RecipeView.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:dishdash/search.dart';
+import 'package:get/get.dart';
+import 'recipe_controller.dart';
+import 'RecipeView.dart';
+import 'search.dart';
 
-class RecipeModel {
-  final String appLabel;
-  final String appImgUrl;
-  final double appCal;
-  final String appUrl;
-
-  RecipeModel(
-      {required this.appLabel,
-        required this.appImgUrl,
-        required this.appCal,
-        required this.appUrl});
-
-  factory RecipeModel.fromMap(Map<String, dynamic> map) {
-    return RecipeModel(
-        appLabel: map['label'],
-        appImgUrl: map['image'],
-        appCal: map['calories'],
-        appUrl: map['url']);
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({super.key});
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  bool isLoading = true;
-  List<RecipeModel> recipeList = <RecipeModel>[];
-  TextEditingController searchController = TextEditingController();
-  List recipeCatList = [
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3BpY3klMjBmb29kfGVufDB8fDB8fHww",
-      "heading": "Chilli Food"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1541599188778-cdc73298e8fd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGRlc3NlcnR8ZW58MHx8MHx8fDA%3D",
-      "heading": "Deserts"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "heading": "Diet Food"
-    },
-    {
-      "imgUrl":
-      "https://cdn.pixabay.com/photo/2020/03/21/04/00/shrimp-4952607_1280.jpg",
-      "heading": "Sea Food"
-    },
-    {
-      "imgUrl":
-      "https://media.istockphoto.com/id/184946701/photo/pizza.jpg?s=612x612&w=0&k=20&c=97rc0VIi-s3mn4xe4xDy9S-XJ_Ohbn92XaEMaiID_eY=",
-      "heading": "Pizza"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dmVnYW4lMjBmb29kfGVufDB8fDB8fHww",
-      "heading": "Vegan"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1546069901-eacef0df6022",
-      "heading": "Breakfast"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c291cCUyMGZvb2R8ZW58MHx8MHx8fDA%3D",
-      "heading": "Soup"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0",
-      "heading": "Salad"
-    },
-    {
-      "imgUrl":
-      "https://images.unsplash.com/photo-1498654896293-37aacf113fd9",
-      "heading": "Appetizers"
-    },
-  ];
-
-  Future<void> getRecipe(String query) async {
-    String url =
-        "https://api.edamam.com/search?q=$query&app_id=55af708b&app_key=da796bcdc6572ed166fdd80db8989449&from=0&to=10&calories=591-722&health=alcohol-free";
-    http.Response response = await http.get(Uri.parse(url));
-    Map<String, dynamic> data = jsonDecode(response.body);
-    recipeList.clear(); // Clear the list before adding new items
-    data["hits"].forEach((element) {
-      RecipeModel recipeMod = RecipeModel.fromMap(element["recipe"]);
-      recipeList.add(recipeMod);
-    });
-    setState(() {
-      isLoading = false;
-    }); // To refresh the UI with new data
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getRecipe("Pasta");
-  }
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final RecipeController controller = Get.put(RecipeController());
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("DishDash"),
+        title: Text(
+          "DishDash",
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 2.0,
+        backgroundColor: Colors.deepPurple,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // Navigate to search or trigger search function
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -122,110 +38,106 @@ class _HomeState extends State<Home> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.deepPurple,
               ),
               child: Text(
                 'DishDash',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
+                  fontFamily: 'Roboto',
                 ),
               ),
             ),
-            for (var category in recipeCatList)
+            for (var category in controller.recipeCatList)
               ListTile(
-                leading: SizedBox(
-                  width: 50, // Set the width you want
-                  height: 50, // Set the height you want
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(25.0),
                   child: Image.network(
                     category["imgUrl"],
-                    fit: BoxFit.cover, // Adjust the image to cover the box
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 title: Text(category["heading"]),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Search(category["heading"]),
-                    ),
-                  );
+                  Get.to(() => Search(category["heading"]));
                 },
               ),
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[900], // Dark gray or charcoal background color
-              gradient: LinearGradient(
-                colors: [
-                  Colors.grey[900]!,
-                  Colors.grey[800]!,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.grey[900]!,
+              Colors.grey[800]!,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SafeArea(
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24, vertical: 20),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 20),
                     decoration: BoxDecoration(
-                      color: Colors.black, // Updated background color to black
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
                     ),
                     child: Row(
                       children: [
                         GestureDetector(
                           onTap: () {
-                            if ((searchController.text).replaceAll(" ", "") ==
-                                "") {
-                              print("no value");
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Search(searchController.text)));
+                            if (controller.searchController.text
+                                .trim()
+                                .isNotEmpty) {
+                              Get.to(() => Search(
+                                  controller.searchController.text));
                             }
                           },
                           child: Container(
                             margin: const EdgeInsets.fromLTRB(3, 0, 7, 0),
                             child: Icon(
                               Icons.search,
-                              color: Colors.yellow, // Updated icon color to yellow
+                              color: Colors.deepPurple,
                             ),
                           ),
                         ),
                         Expanded(
                           child: TextField(
-                            controller: searchController,
-                            style: TextStyle(color: Colors.greenAccent),
+                            controller: controller.searchController,
+                            style: TextStyle(color: Colors.black87),
                             onSubmitted: (value) {
                               if (value.trim().isNotEmpty) {
-                                getRecipe(value.trim());
+                                controller.getRecipe(value.trim());
                               }
                             },
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Yummy Search!!!",
-                              hintStyle: TextStyle(
-                                  color: Colors.yellow), // Updated hint text color to yellow
+                              hintText: "Search for recipes...",
+                              hintStyle: TextStyle(color: Colors.grey),
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   // Add your action here
                                 },
                                 icon: Icon(
-                                  Icons.favorite,
-                                  color: Colors.yellow, // Updated icon color to yellow
+                                  Icons.favorite_border,
+                                  color: Colors.deepPurple,
                                 ),
                               ),
                             ),
@@ -235,173 +147,199 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "WHAT DO YOU WANT TO COOK TODAY?",
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "What do you want to cook today?",
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(height: 20),
-                      Text(
-                        "Dash to Delicious Dishes!",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Explore delicious dishes!",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: recipeList.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RecipeView(
-                                    recipeList[index].appUrl)));
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 5,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Stack(
-                            children: [
-                              Image.network(
-                                recipeList[index].appImgUrl,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 200.0,
-                              ),
-                              Positioned(
+              ),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: controller.recipeList.length,
+                    itemBuilder: (context, index) {
+                      final recipe = controller.recipeList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => RecipeView(recipe.appUrl));
+                        },
+                        child: Card(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 15,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 5,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  recipe.appImgUrl,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 200.0,
+                                ),
+                                Positioned(
                                   left: 0,
                                   right: 0,
                                   bottom: 0,
                                   child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black45,
-                                        borderRadius:
-                                        BorderRadius.circular(20),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black45,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
                                       ),
-                                      child: Text(
-                                        recipeList[index].appLabel,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ))),
-                              Positioned(
+                                    ),
+                                    child: Text(
+                                      recipe.appLabel,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
                                   right: 10,
                                   top: 10,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.greenAccent,
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      color: Colors.deepPurpleAccent,
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 10),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 5,
+                                      horizontal: 10,
+                                    ),
                                     child: Row(
                                       children: [
-                                        const Icon(
-                                            Icons.local_fire_department),
+                                        Icon(Icons.local_fire_department,
+                                            color: Colors.white),
+                                        SizedBox(width: 5),
                                         Text(
-                                          recipeList[index]
-                                              .appCal
-                                              .toStringAsFixed(0),
+                                          recipe.appCal.toStringAsFixed(0),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  )),
-                            ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              }),
+              SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  itemCount: controller.recipeCatList.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final category = controller.recipeCatList[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(() => Search(category["heading"]));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 3,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  category["imgUrl"],
+                                  fit: BoxFit.cover,
+                                  width: 140,
+                                  height: 180,
+                                ),
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 5,
+                                      horizontal: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black45,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(15),
+                                        bottomRight: Radius.circular(15),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        category["heading"],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     );
                   },
                 ),
-                SizedBox(
-                  height: 250,
-                  child: ListView.builder(
-                    itemCount: recipeCatList.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Search(recipeCatList[index]["heading"])));
-                          },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 5,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Stack(
-                                children: [
-                                  Image.network(
-                                    recipeCatList[index]["imgUrl"],
-                                    fit: BoxFit.cover,
-                                    width: 200,
-                                    height: 250,
-                                  ),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    top: 0,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.black26,
-                                          borderRadius:
-                                          BorderRadius.circular(20)),
-                                      child: Center(
-                                        child: Text(
-                                          recipeCatList[index]["heading"],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 28,
-                                              fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
